@@ -1,10 +1,15 @@
 
 import numpy as np
 
+from ..utils import cast_to_compatible_arrays as cast_arrays
+
 
 def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
            beta=0.1, alpha=1.3, ssa=0.92, asy=0.65, ecf=1, csi_param='sparta',
            csi_hfov=2.5, transmittance_scheme='interdependent', as_dict=False):
+
+    cosz, pressure, albedo, pwater, ozone, beta, alpha, ssa, asy, ecf, restore_shape = \
+        cast_arrays(cosz, pressure, albedo, pwater, ozone, beta, alpha, ssa, asy, ecf)
 
     hfov = csi_hfov
     if np.isscalar(hfov):
@@ -120,6 +125,12 @@ def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
     Edh[nighttime] = 0.
     Egh[nighttime] = 0.
     Ecn[nighttime] = 0.
+
+    Ebn = restore_shape(Ebn)
+    Ebh = restore_shape(Ebh)
+    Edh = restore_shape(Edh)
+    Egh = restore_shape(Egh)
+    Ecn = restore_shape(Ecn)
 
     if as_dict is True:
         return {'dni': Ebn, 'dhi': Ebh, 'dif': Edh, 'ghi': Egh, 'csi': Ecn}

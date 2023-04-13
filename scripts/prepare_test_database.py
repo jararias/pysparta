@@ -2,8 +2,6 @@
 from pathlib import Path
 import pandas as pd
 
-import sunwhere
-
 
 DB_ROOT = Path('/home/jararias/Dropbox/proyectos/SPARTA/'
                'sparta_validation/validation_data')
