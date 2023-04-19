@@ -42,6 +42,7 @@ setup(
     classifers=classifiers,
     packages=[
         pkg_name,
+        f'{pkg_name}.models'
     ],
     package_dir={
         pkg_name: pkg_name

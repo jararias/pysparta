@@ -37,6 +37,7 @@ def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
     Egh = np.full(INP_SHAPE, np.nan)  # global horizontal irradiance, W/m2
     Ecn = np.full(INP_SHAPE, np.nan)  # circumsolar normal irradiance, W/m2
 
+    # .. airmasses
     amo = airmass(cosz[domain], 'ozone')
     amr = airmass(cosz[domain], 'rayleigh')
     amw = airmass(cosz[domain], 'water')
