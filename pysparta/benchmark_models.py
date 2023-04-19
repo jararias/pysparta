@@ -1,2 +1,2 @@
 
-from .models.sparta import SPARTA
+from .models.bird import BIRD

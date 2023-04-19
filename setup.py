@@ -52,7 +52,7 @@ setup(
     #     f'scripts/{pkg_name}-benchmark-random'
     # ],
     python_requires=">=3.8",
-    install_requires=['numpy', 'numexpr', 'loguru'],
+    install_requires=['numpy', 'loguru'],
 )
 
 if os.path.exists(f'{pkg_name}/_version.py'):

@@ -1,5 +1,4 @@
 setuptools
 wheel
 numpy
-numexpr
 loguru
