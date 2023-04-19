@@ -1,4 +1,5 @@
 
 from ._version import __version__  # pylint: disable=import-error
 
-from .core import SPARTA
+from .models.sparta import SPARTA
+from . import benchmark_models
