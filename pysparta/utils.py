@@ -42,7 +42,7 @@ def cast_to_compatible_arrays(*args):
 
     if len(input_shapes) > 2:
         msg = ', '.join(map(repr, input_shapes))
-        raise ValueError('mismatch in input arrays with shapes msg%s' % msg)
+        raise ValueError(f'mismatch in input arrays with shapes msg {msg}')
 
     # .. reshape the scalar inputs to the shape of the array inputs.
     #    Because the fortran routine only admits 1d arrays, I directly
@@ -53,7 +53,7 @@ def cast_to_compatible_arrays(*args):
     if len(input_shapes) == 2:
         if (1,) not in input_shapes:
             msg = ', '.join(map(repr, input_shapes))
-            raise ValueError('mismatch in input arrays with shapes %s' % msg)
+            raise ValueError(f'mismatch in input arrays with shapes {msg}')
 
         input_shapes.pop(input_shapes.index((1,)))
 

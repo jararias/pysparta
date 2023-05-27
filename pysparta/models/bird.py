@@ -36,8 +36,8 @@ def BIRD(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
 
     # .. airmass
     c = [0.48353, 0.095846,  96.741, 1.7540]
-    sza = np.degrees(np.arccos(cosz))
-    am = np.maximum(1., 1. / (cosz + c[0]*(sza**c[1])/((c[2]-sza)**c[3])))
+    sza = np.degrees(np.arccos(cosz))[domain]
+    am = np.maximum(1., 1. / (cosz[domain] + c[0]*(sza**c[1])/((c[2]-sza)**c[3])))
     amr = am * (pressure[domain] / 1013.25)
 
     # DIRECT IRRADIANCE...
@@ -49,7 +49,7 @@ def BIRD(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
              0.002715*uo/((1.+(0.044*uo))+0.0003*uo**2)), 0., 1.)
     Tg = np.clip(np.exp(-0.0127*amr**0.26), 0., 1.)
     uw = am*pwater[domain]
-    Tw=np.clip(1 - 2.4959*uw / (((1 + 79.034*uw)**0.6828) + 6.385*uw), 0., 1.)
+    Tw = np.clip(1 - 2.4959*uw / (((1 + 79.034*uw)**0.6828) + 6.385*uw), 0., 1.)
     taua = beta[domain]*(0.2758*(0.38**(-alpha[domain])) + 0.35*(0.5**(-alpha[domain])))
     Ta = np.clip(np.exp(-(taua**0.873)*(1+taua-taua**0.7088)*am**0.9108), 0., 1.)
 
@@ -58,12 +58,12 @@ def BIRD(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
 
     # DIFFUSE IRRADIANCE...
 
-    Taa = np.clip(1-(1-ssa)*(1-am+am**1.06)*(1-Ta), 0., 1.)
+    Taa = np.clip(1-(1-ssa[domain])*(1-am+am**1.06)*(1-Ta), 0., 1.)
     Tas = Ta/Taa
     Tabs = To*Tg*Taa*Tw
     Ba = 0.5*(1+asy[domain])
     rhos = 0.0685 + (1-Ba)*(1-Tas)
-    Ed0h = SC*cosz*np.clip(0.79*Tabs*(0.5*(1-TR) + Ba*(1-Tas))/(1.-am+am**1.02), 0., 1.)
+    Ed0h = SC*cosz[domain]*np.clip(0.79*Tabs*(0.5*(1-TR) + Ba*(1-Tas))/(1.-am+am**1.02), 0., 1.)
 
     Egh[domain] = (Ebh[domain] + Ed0h)/(1-albedo[domain]*rhos)
     Edh[domain] = Egh[domain] - Ebh[domain]

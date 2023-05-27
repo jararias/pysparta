@@ -1,3 +1,4 @@
+# flake8: noqa
 
 import numpy as np
 
@@ -116,12 +117,12 @@ def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
     Ta1, Ta2 = aerosol_transmittance(ama, beta[domain], alpha[domain], transmittance_scheme)
 
     # .. aerosol absorption band transmittances
-    Taa1 = Ta1**(1.-ssa)
-    Taa2 = Ta2**(1.-ssa)
+    Taa1 = Ta1**(1.-ssa[domain])
+    Taa2 = Ta2**(1.-ssa[domain])
 
     # .. aerosol scattering band transmittances
-    Tas1 = Ta1**ssa
-    Tas2 = Ta2**ssa
+    Tas1 = Ta1**ssa[domain]
+    Tas2 = Ta2**ssa[domain]
 
     # .. absorption band transmittances
     Tabs1 = To1*Tg1*Tw1*Taa1
@@ -148,16 +149,16 @@ def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
                                    beta[domain], alpha[domain], ssa[domain], transmittance_scheme)
 
     # .. rayleigh scattering
-    ray_scat1 = FR*Tabs1*(1.-TR1)*cosz
-    ray_scat2 = FR*Tabs2*(1.-TR2)*cosz
+    ray_scat1 = FR*Tabs1*(1.-TR1)*cosz[domain]
+    ray_scat2 = FR*Tabs2*(1.-TR2)*cosz[domain]
 
     # .. aerosol scattering
-    aer_scat1 = Fa*Tabs1*TR1*(1.-Tas1)*cosz
-    aer_scat2 = Fa*Tabs2*TR2*(1.-Tas2)*cosz
+    aer_scat1 = Fa*Tabs1*TR1*(1.-Tas1)*cosz[domain]
+    aer_scat2 = Fa*Tabs2*TR2*(1.-Tas2)*cosz[domain]
 
     # .. ground-sky multiple scattering
-    sky_scat1 = rsky1*albedo*(T1*cosz + ray_scat1 + aer_scat1) / (1.-rsky1*albedo)
-    sky_scat2 = rsky2*albedo*(T2*cosz + ray_scat2 + aer_scat2) / (1.-rsky2*albedo)
+    sky_scat1 = rsky1*albedo[domain]*(T1*cosz[domain] + ray_scat1 + aer_scat1) / (1.-rsky1*albedo[domain])
+    sky_scat2 = rsky2*albedo[domain]*(T2*cosz[domain] + ray_scat2 + aer_scat2) / (1.-rsky2*albedo[domain])
 
     scat1 = ray_scat1 + aer_scat1 + sky_scat1  # scattering "transmittance" in band 1
     scat2 = ray_scat2 + aer_scat2 + sky_scat2  # scattering "transmittance" in band 2
@@ -175,7 +176,7 @@ def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
     if csi_param == 'sparta':
         Tab = BF[0]*Ta1 + BF[1]*Ta2
         Tab[(Ta1 >= 0.9999) & (Ta2 >= 0.9999)] = 1.
-        csr = aerosol_circumsolar_ratio(alpha[domain], asy[domain], Tab, hfov[domain])
+        csr[domain] = aerosol_circumsolar_ratio(alpha[domain], asy[domain], Tab, hfov[domain])
     Ecn = (csr / (1. - csr)) * Ebn
 
     # .. circumsolar correction
