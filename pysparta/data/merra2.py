@@ -4,18 +4,20 @@ import time
 from io import StringIO
 from pathlib import Path
 from copy import deepcopy
-from functools import reduce, cache
+from functools import reduce
 from datetime import datetime, timezone
 import concurrent.futures as cf
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from loguru import logger
 from siphon.catalog import TDSCatalog
 from siphon.ncss import ResponseRegistry
 
 
 logger.disable(__name__)
+logger.add(lambda msg: tqdm.write(msg, end=''), colorize=True)
 
 
 def download_dataset(dataset, lon, lat, variables):
@@ -48,6 +50,17 @@ def download_monthly_variables(date_start, date_end, lon, lat, variables, catalo
 
     kwargs = dict(lon=lon, lat=lat, variables=variables)
 
+    progress_bar_msg = 'Monthly '
+    if len(variables) == 1:
+        progress_bar_msg += variables[0]
+    elif len(variables) == 2:
+        progress_bar_msg += ' and '.join(variables)
+    else:
+        progress_bar_msg += ', '.join(variables[:-1]) + f' and {variables[-1]}'
+
+    tqdm_kwargs = dict(desc=progress_bar_msg, total=len(year_and_month))
+    tqdm_it = 0
+
     def select_dataset(cds, ym):
         ym_stamp = f'{ym.year}{ym.month:02d}'
         ds_name = list(filter(lambda ds: ym_stamp in ds, cds.datasets))[0]
@@ -58,7 +71,7 @@ def download_monthly_variables(date_start, date_end, lon, lat, variables, catalo
         url = SERVER_ROOT + catalog_pattern.format(year=year)
 
         catalog = TDSCatalog(url)
-        logger.info(catalog.catalog_url)
+        logger.debug(catalog.catalog_url)
 
         with cf.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
 
@@ -67,18 +80,19 @@ def download_monthly_variables(date_start, date_end, lon, lat, variables, catalo
                 ds = select_dataset(catalog, ym)
                 futures[executor.submit(download_dataset, ds, **kwargs)] = ds
 
-            logger.info('  futures submitted!')
+            logger.debug('  futures submitted!')
 
-            for future in cf.as_completed(futures):
+            for future in tqdm(cf.as_completed(futures), initial=tqdm_it, **tqdm_kwargs):
                 ds = futures[future]
-                logger.info(f'    > {ds.name} completed!')
                 try:
                     data = future.result()
                     gridcell_lat = data.pop('latitude[unit="degrees_north"]').unique().item()
                     gridcell_lon = data.pop('longitude[unit="degrees_east"]').unique().item()
                     df = pd.concat([df, data], axis=0)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logger.info(f'{ds} generated and exception: {exc}')
+                    logger.debug(f'{ds} generated and exception: {exc}')
+
+        tqdm_it += len(futures)
 
     df = df.sort_index()
     df.index = df.index.tz_convert(None)
@@ -109,18 +123,30 @@ def download_hourly_variables(date_start, date_end, lon, lat, variables, catalog
     SERVER_ROOT = 'https://goldsmr4.gesdisc.eosdis.nasa.gov/thredds/'
 
     days = pd.date_range(date_start, date_end, freq='T')
+    n_days = len(pd.to_datetime(np.array(days, dtype='datetime64[D]')).unique())
     year_and_month = pd.to_datetime(np.array(days, dtype='datetime64[M]')).unique()
 
     df = pd.DataFrame()
 
     kwargs = dict(lon=lon, lat=lat, variables=variables)
 
+    progress_bar_msg = 'Hourly '
+    if len(variables) == 1:
+        progress_bar_msg += variables[0]
+    elif len(variables) == 2:
+        progress_bar_msg += ' and '.join(variables)
+    else:
+        progress_bar_msg += ', '.join(variables[:-1]) + f' and {variables[-1]}'
+
+    tqdm_kwargs = dict(desc=progress_bar_msg, total=n_days)
+    tqdm_it = 0
+
     for ym in year_and_month:
 
         url = SERVER_ROOT + catalog_pattern.format(year=ym.year, month=ym.month)
 
         catalog = TDSCatalog(url)
-        logger.info(catalog.catalog_url)
+        logger.debug(catalog.catalog_url)
 
         # filter datasets to keep only the requested ones...
         # I use deepcopy + pop to ensure that datasets is the same class as catalog.datasets
@@ -137,18 +163,19 @@ def download_hourly_variables(date_start, date_end, lon, lat, variables, catalog
             futures = {executor.submit(download_dataset, ds, **kwargs): ds
                        for ds in datasets.values()}
 
-            logger.info('  futures submitted!')
+            logger.debug('  futures submitted!')
 
-            for future in cf.as_completed(futures):
+            for future in tqdm(cf.as_completed(futures), initial=tqdm_it, **tqdm_kwargs):
                 ds = futures[future]
-                logger.info(f'    > {ds.name} completed!')
                 try:
                     data = future.result()
                     gridcell_lat = data.pop('latitude[unit="degrees_north"]').unique().item()
                     gridcell_lon = data.pop('longitude[unit="degrees_east"]').unique().item()
                     df = pd.concat([df, data], axis=0)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logger.info(f'{ds} generated and exception: {exc}')
+                    logger.debug(f'{ds} generated and exception: {exc}')
+
+        tqdm_it += len(datasets)
 
     df = df.sort_index()
     df.index = df.index.tz_convert(None)
@@ -173,8 +200,7 @@ def download_hourly_radiation_diagnostics(date_start, date_end, lon, lat, variab
         catalog_pattern='catalog/M2T1NXRAD.5.12.4/{year}/{month:02d}/catalog.xml')
 
 
-@cache
-def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthly=None):
+def get_clearsky_atmosphere(date_start, date_end, lon, lat, hourly=None, monthly=None):
     """
     hourly must be None or list of valid_variable_names (idem for monthly)
     """
@@ -247,7 +273,7 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
     # hourly requests !!
     if (requested_variables := {'alpha', 'beta', 'ssa'}.intersection(hourly_variables)):
-        print(f'{requested_variables=} in hourly aerosols')
+        logger.info(f'Hourly aerosols requested: {requested_variables}')
 
         variables = [name_map[name] for name in requested_variables]
         variables = list(set(reduce(lambda a, b: a + b, variables)))  # flatten and remove duplicates
@@ -271,7 +297,7 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
     # monthly requests !!
     if (requested_variables := {'alpha', 'beta', 'ssa'}.intersection(monthly_variables)):
-        print(f'{requested_variables=} in monthly aerosols')
+        logger.info(f'Monthly aerosols requested: {requested_variables}')
 
         variables = [name_map[name] for name in requested_variables]
         variables = list(set(reduce(lambda a, b: a + b, variables)))  # flatten and remove duplicates
@@ -307,7 +333,7 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
     # hourly requests !!
     if (requested_variables := {'pressure', 'ozone', 'pwater'}.intersection(hourly_variables)):
-        print(f'{requested_variables=} in hourly single-level variables')
+        logger.info(f'Hourly single-level variables requestes: {requested_variables}')
 
         variables = [name_map[name] for name in requested_variables]
         variables = list(set(reduce(lambda a, b: a + b, variables)))  # flatten and remove duplicates
@@ -332,7 +358,7 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
     # monthly requests !!
     if (requested_variables := {'pressure', 'ozone', 'pwater'}.intersection(monthly_variables)):
-        print(f'{requested_variables=} in monthly single-level variables')
+        logger.info(f'Monthly single-level variables requested: {requested_variables}')
 
         variables = [name_map[name] for name in requested_variables]
         variables = list(set(reduce(lambda a, b: a + b, variables)))  # flatten and remove duplicates
@@ -368,7 +394,7 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
     # hourly requests !!
     if (requested_variables := {'albedo'}.intersection(hourly_variables)):
-        print(f'{requested_variables=} in hourly radiation diagnostics')
+        logger.info(f'Hourly albedo requested: {requested_variables}')
 
         variables = [name_map[name] for name in requested_variables]
         variables = list(set(reduce(lambda a, b: a + b, variables)))  # flatten and remove duplicates
@@ -387,7 +413,7 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
     # monthly requests !!
     if (requested_variables := {'albedo'}.intersection(monthly_variables)):
-        print(f'{requested_variables=} in monthly radiation diagnostics')
+        logger.info(f'Monthly albedo requested: {requested_variables}')
 
         variables = [name_map[name] for name in requested_variables]
         variables = list(set(reduce(lambda a, b: a + b, variables)))  # flatten and remove duplicates
@@ -413,4 +439,4 @@ def get_merra2_clearsky_data(date_start, date_end, lon, lat, hourly=None, monthl
 
         logger.info(f'Running time: {time.perf_counter() - t_start:.1f} seconds')
 
-    return df, gridcell_lon, gridcell_lat
+    return {'data': df, 'gridcell_lon': gridcell_lon, 'gridcell_lat': gridcell_lat}
