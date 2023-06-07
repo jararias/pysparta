@@ -200,7 +200,7 @@ def download_hourly_radiation_diagnostics(date_start, date_end, lon, lat, variab
         catalog_pattern='catalog/M2T1NXRAD.5.12.4/{year}/{month:02d}/catalog.xml')
 
 
-def get_clearsky_atmosphere(date_start, date_end, lon, lat, hourly=None, monthly=None):
+def get_clearsky_atmosphere(date_start, date_end, lon, lat, hourly=None, monthly=None, exclude=None):
     """
     hourly must be None or list of valid_variable_names (idem for monthly)
     """
@@ -210,6 +210,10 @@ def get_clearsky_atmosphere(date_start, date_end, lon, lat, hourly=None, monthly
     # PERFECT CAPTURE OF HOURLY + MONTHLY CHOICES...
 
     VALID_VARIABLE_NAMES = ('alpha', 'beta', 'ssa', 'pressure', 'pwater', 'ozone', 'albedo')
+
+    # default configuration...
+    hourly_variables = {'alpha', 'beta', 'pwater'}
+    monthly_variables = {'ozone', 'albedo', 'pressure', 'ssa'}
 
     if not isinstance(hourly, (list, type(None))):
         raise ValueError('`hourly` must be None or list')
@@ -225,10 +229,6 @@ def get_clearsky_atmosphere(date_start, date_end, lon, lat, hourly=None, monthly
         if len(not_valid := [name for name in monthly if name not in VALID_VARIABLE_NAMES]):
             raise ValueError(f'found unknown variable names in `monthly`: {not_valid}')
 
-    # default configuration...
-    hourly_variables = {'alpha', 'beta', 'pwater'}
-    monthly_variables = {'ozone', 'albedo', 'pressure', 'ssa'}
-
     if hourly is not None:
         hourly_variables = hourly_variables.union(hourly)
         monthly_variables = monthly_variables.difference(hourly_variables)
@@ -239,8 +239,12 @@ def get_clearsky_atmosphere(date_start, date_end, lon, lat, hourly=None, monthly
 
     assert hourly_variables.union(monthly_variables) == set(VALID_VARIABLE_NAMES)
 
-    logger.debug(f'{hourly_variables=}')
-    logger.debug(f'{monthly_variables=}')
+    if exclude is not None:
+        hourly_variables = hourly_variables.difference(exclude)
+        monthly_variables = monthly_variables.difference(exclude)
+
+    logger.info(f'{hourly_variables=}')
+    logger.info(f'{monthly_variables=}')
 
     # CHECK INPUT DATATIMES, MOVE TO UTC, AND CONVERT TO NAIVE DATETIMES
 
