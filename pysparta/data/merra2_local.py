@@ -333,11 +333,12 @@ class LTADataset:
             return data[:, 0]
         return data
 
-    def get_atmos(self, **kwargs):
-        with cf.ThreadPoolExecutor(max_workers=5) as executor:
+    def get_atmos(self, times=None, lons=None, lats=None, variables=None, regrid_method='bilinear'):
+        req_variables = self.variables if variables is None else variables
+        with cf.ThreadPoolExecutor(max_workers=len(req_variables)) as executor:
 
-            futures = {executor.submit(self.get, variable, **kwargs): variable
-                       for variable in self.variables}
+            futures = {executor.submit(self.get, variable, times, lons, lats, regrid_method): variable
+                       for variable in req_variables}
             logger.debug('futures submitted!!')
 
             data = {}
