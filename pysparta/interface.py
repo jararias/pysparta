@@ -84,7 +84,7 @@ def run_model(model, times=None, sites=None, regular_grid=None, atmos=None,
             sites is None or regular_grid is None,
             'only one of `cosz` and `ecf` must be provided')
 
-        atmos_obj = atmoslib.databases[atmos]()
+        atmos_obj = atmoslib.databases[atmos]
         # must retrieve the atmosphere variables valid for this model...
         variables = set(model_vars).intersection(atmos_obj.variables)
         # ...and that are not provided as kwargs...
@@ -105,24 +105,19 @@ def run_model(model, times=None, sites=None, regular_grid=None, atmos=None,
         coords = kwargs['cosz'].coords
         var_attrs = {
             'ghi': {
-                'description': 'global horizontal irradiance',
-                'standard_name': 'surface_downwelling_shortwave_flux_in_air_assuming_clear_sky',
+                'standard_name': 'global horizontal irradiance',
                 'units': 'W m-2'},
             'dni': {
-                'description': 'direct normal irradiance',
-                'standard_name': 'surface_direct_along_beam_shortwave_flux_in_air_assuming_clear_sky',
+                'standard_name': 'direct normal irradiance',
                 'units': 'W m-2'},
             'dhi': {
-                'description': 'direct horizontal irradiance',
-                'standard_name': 'surface_direct_downwelling_shortwave_flux_in_air_assuming_clear_sky',
+                'standard_name': 'direct horizontal irradiance',
                 'units': 'W m-2'},
             'dif': {
-                'description': 'diffuse horizontal irradiance',
-                'standard_name': 'surface_diffuse_downwelling_shortwave_flux_in_air_assuming_clear_sky',
+                'standard_name': 'diffuse horizontal irradiance',
                 'units': 'W m-2'},
             'csi': {
-                'description': 'circumsolar irradiance',
-                'standard_name': '',
+                'standard_name': 'circumsolar irradiance',
                 'units': 'W m-2'},
         }
         return xr.Dataset(

@@ -30,36 +30,28 @@ logger.disable(__name__)
 
 var_attrs = {
     'albedo': {
-        'description': 'ground albedo',
-        'standard_name': 'surface_albedo',
+        'standard_name': 'surface albedo',
         'units': '1'},
     'pressure': {
-        'description': 'atmospheric pressure at ground level',
-        'standard_name': 'air_pressure',
+        'standard_name': 'atmospheric pressure at ground level',
         'units': 'hPa'},
     'ozone': {
-        'description': 'total-column ozone content',
-        'standard_name': 'atmosphere_mass_content_of_ozone',
+        'standard_name': 'total-column ozone content',
         'units': 'atm-cm'},
     'pwater': {
-        'description': 'precipitable water',
-        'standard_name': 'atmosphere_mass_content_of_water_vapor',
+        'standard_name': 'precipitable water',
         'units': 'atm-cm'},
     'beta': {
-        'description': 'aerosol angstrom turbidity',
-        'standard_name': 'atmosphere_optical_thickness_due_to_ambient_aerosol_particles',
+        'standard_name': 'aerosol angstrom turbidity',
         'units': '1'},
     'alpha': {
-        'description': 'aerosol angstrom exponent',
-        'standard_name': 'angstrom_exponent_of_ambient_aerosol_in_air',
+        'standard_name': 'aerosol angstrom exponent',
         'units': 1},
     'ssa': {
-        'description': 'shortwave aerosol single scattering albedo',
-        'standard_name': 'single_scattering_albedo_in_air_due_to_ambient_aerosol_particles',
+        'standard_name': 'aerosol single scattering albedo',
         'units': '1'},
     'elevation': {
-        'description': 'ground elevation',
-        'standard_name': 'surface_altitude',
+        'standard_name': 'surface elevation',
         'units': 'm'}
 }
 

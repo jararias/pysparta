@@ -6,14 +6,14 @@ from ._base import BaseAtmosphere
 from .merra2_cda import MERRA2CDAAtmosphere
 from .merra2_lta import MERRA2LTAAtmosphere
 
-databases = {}
 
-
-def register(name, base_atmosphere):
+def register(name, atmosphere_cls):
     global databases
-    if issubclass(base_atmosphere, BaseAtmosphere):
-        databases.update({name: base_atmosphere})
+    if issubclass(atmosphere_cls, BaseAtmosphere):
+        databases.update({name: atmosphere_cls()})
 
+
+databases = {}
 
 register('merra2_cda', MERRA2CDAAtmosphere)
 register('merra2_lta', MERRA2LTAAtmosphere)
