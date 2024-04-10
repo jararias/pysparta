@@ -55,42 +55,6 @@ var_attrs = {
         'units': 'm'}
 }
 
-def create_lta_dataset(source_path, target_path='lta'):
-    VARIABLES = [
-        ('albedo', 3),
-        ('pressure', 0),
-        ('ozone', 3),
-        ('pwater', 2),
-        ('alpha', 2),
-        ('beta', 3),
-        ('ssa', 3),
-        ('elevation', 0)
-    ]
-
-    def get_target_path(**kwargs):
-        return target_path.format(**kwargs)
-
-    def get_source_file_name(**kwargs):
-        # source_path = Path('/home/jararias/.solarpandas-data/merra2_lta/2010-2021')
-        if kwargs['variable'] == 'elevation':
-            return Path(source_path) / 'merra2_elevation.nc4'
-        return Path(source_path) / 'merra2_{variable}_lta_2010-2021.nc4'.format(**kwargs)
-
-    for variable, precision in VARIABLES:
-        logger.info(f'Processing variable `{variable}`')
-
-        file_name = get_source_file_name(variable=variable)
-        if not file_name.exists():
-            logger.warning(f'missing file `{file_name}`. Skipping')
-            continue
-
-        values, xlon, xlat, _ = read_netcdf(file_name, variable)
-        values = values[0] if variable == 'elevation' else values
-
-        path = get_target_path()
-        save_array(path, variable, values=values, precision=precision)
-        update_metadata(path, variable, latitude=xlat, longitude=xlon)
-
 
 class MERRA2LTAAtmosphere(
     BaseAtmosphere,
