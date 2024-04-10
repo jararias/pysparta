@@ -1,5 +1,17 @@
 pandas
 numpy
-siphon
-tqdm
+scipy
+xarray
+blosc2
+netCDF4
 loguru
+sunwhere @ git+https://github.com/jararias/sunwhere@main
+
+# pandas==2.0.2
+# numpy==1.24.3
+# scipy==1.13.0
+# xarray==2024.3.0
+# blosc2==2.6.2
+# netCDF4==1.6.5
+# loguru==0.7.2
+# sunwhere==1.3.4

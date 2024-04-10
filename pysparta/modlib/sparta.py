@@ -2,12 +2,12 @@
 
 import numpy as np
 
-from ..utils import cast_to_compatible_arrays as cast_arrays
+from .sandbox import cast_to_compatible_arrays as cast_arrays
 
 
 def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
            beta=0.1, alpha=1.3, ssa=0.92, asy=0.65, ecf=1, csi_param='sparta',
-           csi_hfov=2.5, transmittance_scheme='interdependent', as_dict=False):
+           csi_hfov=2.5, transmittance_scheme='interdependent'):
     """
     [S]olar [PA]rameterization of the [R]adiative [T]ransfer of the
     [A]tmosphere [SPARTA] A 2-band broadband clear-sky solar radiation model.
@@ -197,10 +197,7 @@ def SPARTA(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
     Egh = restore_shape(Egh)
     Ecn = restore_shape(Ecn)
 
-    if as_dict is True:
-        return {'dni': Ebn, 'dhi': Ebh, 'dif': Edh, 'ghi': Egh, 'csi': Ecn}
-
-    return Ebn, Ebh, Edh, Egh, Ecn
+    return {'dni': Ebn, 'dhi': Ebh, 'dif': Edh, 'ghi': Egh, 'csi': Ecn}
 
 
 def airmass(cosz, constituent):

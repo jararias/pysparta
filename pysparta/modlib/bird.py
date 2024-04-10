@@ -1,11 +1,11 @@
 
 import numpy as np
 
-from ..utils import cast_to_compatible_arrays as cast_arrays
+from .sandbox import cast_to_compatible_arrays as cast_arrays
 
 
 def BIRD(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
-         beta=0.1, alpha=1.3, ssa=0.92, asy=0.65, ecf=1, as_dict=False):
+         beta=0.1, alpha=1.3, ssa=0.92, asy=0.65, ecf=1):
     """
     BIRD clear sky model
     """
@@ -79,7 +79,4 @@ def BIRD(cosz=.5, pressure=1013.25, albedo=0.2, pwater=1.4, ozone=0.3,
     Edh = restore_shape(Edh)
     Egh = restore_shape(Egh)
 
-    if as_dict is True:
-        return {'dni': Ebn, 'dhi': Ebh, 'dif': Edh, 'ghi': Egh}
-
-    return Ebn, Ebh, Edh, Egh
+    return {'dni': Ebn, 'dhi': Ebh, 'dif': Edh, 'ghi': Egh}
