@@ -2,6 +2,10 @@
 
 #### page under construction!
 
+The SPARTA model is fully described (open access) in:
+
+Ruiz-Arias J.A (2023) SPARTA: Solar parameterization for the radiative transfer of the cloudless atmosphere, _Renewable and Sustainable Energy Reviews_, Vol. 188, 113833 doi: [10.1016/j.rser.2023.113833](https://doi.org/10.1016/j.rser.2023.113833)
+
 ### Installation
 
 ```python
