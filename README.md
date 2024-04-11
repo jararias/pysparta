@@ -100,12 +100,12 @@ res = SPARTA(times,
 
 (The `beta` and `pwater` values from the `merra2_lta` atmosphere are overwritten to 0.01 and 0.1, respectively).
 
-Furthermore, I could have been used the `merra2_cda` atmosphere, also shipped with SPARTA, and that mimic the former behavior:
+Furthermore, I could have used the `merra2_cda` atmosphere, also shipped with SPARTA, that mimics the former behavior:
 
 ```python
 res = SPARTA(times,
              sites={'latitude': lats, 'longitude': lons},
-             atmos='merra2_lta', beta=0.01, pwater=0.1)
+             atmos='merra2_cda')
 ```
 
 If, in any case, I don't want to use the `PSA` solar position algorithm, for some reason, and I prefer the `NREL SPA` instead, I could add
