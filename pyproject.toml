@@ -1,3 +1,56 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv-build>=0.7.19"]
+build-backend = "uv_build"
+
+[project]
+name = "pysparta"
+version = "0.1.0"
+description = "Solar PArameterization for the Radiative Transfer of the Atmosphere"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "Jose A Ruiz-Arias", email = "jararias@uma.es"}]
+license = {text = "CC BY-NC-SA 4.0"}
+classifiers = [
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+]
+urls = {Homepage = "https://github.com/jararias/pysparta"}
+dependencies = [
+    "blosc2>=4.1.2",
+    "loguru>=0.7.3",
+    "netcdf4>=1.7.4",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "scipy>=1.17.1",
+    "sunwhere",
+    "xarray>=2026.4.0",
+]
+
+[tool.uv-build.targets.wheel]
+# Equivale a package-dir = {"" = "."} y packages.find (namespaces = true) en setuptools
+# uv-build busca automáticamente paquetes con __init__.py o directorios de namespaces
+packages = ["pysparta"]
+
+[dependency-groups]
+dev = [
+    "ipython>=9.13.0",
+    "matplotlib>=3.10.9",
+    "pyqt6>=6.11.0",
+]
+
+[tool.uv.sources]
+sunwhere = { git = "https://github.com/jararias/sunwhere" }
+
+[tool.uv-build]
+# Equivale a include-package-data = false en setuptools
+# uv-build solo incluye archivos .py por defecto a menos que se especifique lo contrario
+exclude = ["*"] 
+
+# Equivale a tool.setuptools.package-data
+# Aquí incluimos explícitamente los archivos de datos deseados
+include = [
+    "pysparta/atmoslib/merra2_lta_data/*.bl2",
+    "pysparta/atmoslib/merra2_lta_data/*.json",
+]
