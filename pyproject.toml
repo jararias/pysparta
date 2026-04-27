@@ -7,7 +7,7 @@ name = "pysparta"
 version = "0.1.0"
 description = "Solar PArameterization for the Radiative Transfer of the Atmosphere"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 authors = [{name = "Jose A Ruiz-Arias", email = "jararias@uma.es"}]
 license = {text = "CC BY-NC-SA 4.0"}
 classifiers = [
