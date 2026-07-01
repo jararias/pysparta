@@ -60,7 +60,7 @@ def BIRD(
 
     Notes
     -----
-        - The model uses a fixed solar constant (\(G_{sc}\)) of 1353 W/m².
+        - The model uses a fixed solar constant of 1353 W/m².
         - Nighttime values are automatically masked (set to 0) for zenith 
           angles greater than 90.5°.
         - The algorithm includes a 0.9662 correction factor for the 

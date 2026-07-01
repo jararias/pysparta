@@ -29,8 +29,8 @@ clean:
 	@echo "✅ Cleaned"
 
 .PHONY: tests
-coverage:
-	@echo "🚀 Testing unit tests and coverage analysis"
+tests:
+	@echo "🚀 Performing unit tests and coverage analysis"
 	@uv run coverage run -m pytest -v --junit-xml=junit.xml tests/unit/
 	@uv run coverage xml -o coverage.xml
 	@uv run genbadge tests -i junit.xml -o docs/images/tests-badge.svg

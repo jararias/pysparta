@@ -23,7 +23,7 @@ Retrieve long-term monthly averages for specific sites:
 >>> from spartasolar.atmoslib import MERRA2LTAAtmosphere
 >>>
 >>> # Generate times covering multiple years
->>> times = pd.date_range("2020-01-15", "2021-12-15", freq="MS") + pd.Timedelta(14.5, "d")
+>>> times = pd.date_range("2020-01-15", "2021-12-15", freq="MS") + pd.Timedelta(14.5, "D")
 >>> atm = MERRA2LTAAtmosphere.at_sites(
 ...     times=times,
 ...     latitude=[36.72, 40.42],
@@ -37,7 +37,7 @@ Retrieve data on a regular grid:
 >>> import numpy as np
 >>> lats = np.arange(36.0, 41.0, 0.5)
 >>> lons = np.arange(-5.0, -3.0, 0.5)
->>> times = pd.date_range("2023-01-15", periods=12, freq="MS") + pd.Timedelta(14.5, "d")
+>>> times = pd.date_range("2023-01-15", periods=12, freq="MS") + pd.Timedelta(14.5, "D")
 >>> atm = MERRA2LTAAtmosphere.on_regular_grid(
 ...     times=times,
 ...     latitude=lats,
@@ -210,7 +210,7 @@ class MERRA2LTAAtmosphere(
         >>> import numpy as np
         >>> lats = np.linspace(36.0, 41.0, 20)
         >>> lons = np.linspace(-5.0, -3.0, 20)
-        >>> times = pd.date_range("2023-01-15", periods=12, freq="MS") + pd.Timedelta(14.5, "d")
+        >>> times = pd.date_range("2023-01-15", periods=12, freq="MS") + pd.Timedelta(14.5, "D")
         >>> atm = MERRA2LTAAtmosphere.on_regular_grid(
         ...     times=times,
         ...     latitude=lats,
@@ -283,7 +283,7 @@ class MERRA2LTAAtmosphere(
 
         def assign_year(ds, year):
             times_month_start = pd.date_range(f"{year}-01-01", periods=12, freq="MS", tz="UTC")
-            return ds.assign_coords(month=times_month_start + pd.Timedelta(14.5, "d")).rename({"month": "time"})
+            return ds.assign_coords(month=times_month_start + pd.Timedelta(14.5, "D")).rename({"month": "time"})
 
         # 1. determine the year span needed based on requested times (with padding near year boundaries)
         times_utc = ensure_tz_aware_datetime_index(times, utc=True)

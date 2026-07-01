@@ -1,0 +1,7 @@
+{
+  "editor.fontSize": 20,
+  "terminal.integrated.fontSize": 16,
+  "editor.fontFamily": "Fira Code",
+  "window.zoomLevel": 1.5,
+  "makefile.configureOnOpen": false
+}

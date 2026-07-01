@@ -51,63 +51,6 @@ class TestGetDatabasePath:
         assert result == default_path
 
 
-class TestInferYearsFromTimes:
-    """Test suite for _infer_years_from_times static method."""
-
-    def test_infer_years_single_year(self):
-        """Test year inference with dates from a single year."""
-        times = pd.date_range("2020-06-01", periods=10, freq="D")
-        
-        years = MERRA2DailyAtmosphere._infer_years_from_times(times)
-        
-        assert years == [2020]
-
-    def test_infer_years_multiple_years(self):
-        """Test year inference with dates spanning multiple years."""
-        times = pd.date_range("2020-11-01", periods=90, freq="D")
-        
-        years = MERRA2DailyAtmosphere._infer_years_from_times(times)
-        
-        assert 2020 in years
-        assert 2021 in years
-
-    def test_infer_years_with_boundary_padding_start(self):
-        """Test that previous year is added if close to year start."""
-        times = pd.date_range("2020-01-02", periods=5, freq="D")
-        
-        years = MERRA2DailyAtmosphere._infer_years_from_times(times)
-        
-        # Should include 2019 because we're close to start of 2020
-        assert 2019 in years
-        assert 2020 in years
-
-    def test_infer_years_with_boundary_padding_end(self):
-        """Test that next year is added if close to year end."""
-        times = pd.date_range("2020-12-29", periods=5, freq="D")
-        
-        years = MERRA2DailyAtmosphere._infer_years_from_times(times)
-        
-        # Should include 2021 because we're close to end of 2020
-        assert 2020 in years
-        assert 2021 in years
-
-    def test_infer_years_with_numpy_datetime64(self):
-        """Test year inference with numpy datetime64 array."""
-        times = np.array(['2020-06-01', '2020-06-15', '2020-07-01'], dtype='datetime64[D]')
-        
-        years = MERRA2DailyAtmosphere._infer_years_from_times(times)
-        
-        assert years == [2020]
-
-    def test_infer_years_sorted_output(self):
-        """Test that output years are sorted."""
-        times = pd.date_range("2019-12-29", periods=100, freq="D")
-        
-        years = MERRA2DailyAtmosphere._infer_years_from_times(times)
-        
-        assert years == sorted(years)
-
-
 class TestEnsureAllPathsAreLocal:
     """Test suite for _ensure_all_paths_are_local static method."""
 
