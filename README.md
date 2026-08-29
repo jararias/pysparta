@@ -9,6 +9,7 @@
 ![Tests](https://raw.githubusercontent.com/jararias/sparta-solar/main/docs/images/tests-badge.svg)
 ![Coverage](https://raw.githubusercontent.com/jararias/sparta-solar/main/docs/images/coverage-badge.svg)
 [![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22164936.svg)](https://doi.org/10.5281/zenodo.22164936)
 
 A Python library to compute clear-sky solar irradiance at the ground surface using the _Solar PArameterization of the Radiative Transfer of the Atmosphere_ ([SPARTA](http://hdl.handle.net/10630/28011)) radiative transfer model, with built-in access to multiple atmospheric databases (Copernicus [CAMS Radiative Service](https://confluence.ecmwf.int/display/CKB/CAMS+solar+radiation+time-series%3A+data+documentation) via [SODA](https://www.soda-pro.com/web-services/radiation/cams-radiation-service/info), hourly NASA [MERRA-2](https://gmao.gsfc.nasa.gov/gmao-products/merra-2/) data via [Google Earth Engine](https://developers.google.com/earth-engine/datasets/catalog/NASA_GSFC_MERRA_aer_2?hl=es-419), and a daily dataset curated and maintained as part of the sparta-solar library on a dedicated Hugging Face [dataset](https://huggingface.co/datasets/josearuizarias/merra2-daily-clearsky)).
 

@@ -5,8 +5,9 @@ authors:
     given-names: "Jose A."
     orcid: "https://orcid.org/0000-0003-4220-1751"
 title: "sparta-solar"
-version: "0.2.2-a1"
-doi: "10.5281/zenodo.xxxxxx"
+version: "0.2.2"
+# DOI principal para el codigo
+doi: "10.5281/zenodo.22164936"
 date-released: "2026-08-29"
 url: "https://jararias.github.io/sparta-solar/"
 repository-code: "https://github.com/jararias/sparta-solar"
@@ -14,3 +15,7 @@ keywords:
   - "clear-sky solar irradiance"
   - "solar resource"
 license: "CC-BY-NC-SA-4.0"
+identifiers:
+  - type: doi
+    value: "10.1016/j.rser.2023.113833"
+    description: "scientific paper"
