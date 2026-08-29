@@ -11,6 +11,7 @@
 ![Tests](images/tests-badge.svg)
 ![Coverage](images/coverage-badge.svg)
 [![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22164936.svg)](https://doi.org/10.5281/zenodo.22164936)
 
 **sparta-solar** is a Python library for computing **clear-sky solar irradiance** at the surface using the *Solar Parameterization of the Radiative Transfer of the Atmosphere* ([SPARTA](http://hdl.handle.net/10630/28011)) model. It integrates seamlessly with multiple atmospheric databases to supply the aerosol, water vapour, ozone, and pressure inputs that the radiative transfer model requires.
 
